@@ -1,9 +1,14 @@
 let x, y, myInterval;
 let d=3;
 
+document.addEventListener('contextmenu', (event) => {
+    if (!event.ctrlKey) event.preventDefault();
+});
+
 document.body.addEventListener("mousedown", (e) => {
   if (!document.querySelector(".autoscrollCursorManager")) {
-    if ((e.altKey && e.button === 0) || e.button === 1) {
+    if (!e.ctrlKey && ((e.altKey && e.button === 0) || e.button === 2)) {
+      e.preventDefault();
       browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 10 }) => {
         d = acceleration;
         const div = document.createElement("div");
