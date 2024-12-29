@@ -1,12 +1,14 @@
+const d = 3;
+
 let x = undefined
 let y = undefined
 
 let myInterval = undefined
 
-document.body.addEventListener('click', (e) => {
+document.body.addEventListener('mousedown', (e) => {
 
     if (!document.querySelector('.autoscrollCursorManager')) {
-        if ((e.ctrlKey && e.button === 0) || (e.button === 2)) {
+        if ((e.ctrlKey && e.button === 0) || (e.button === 1)) {
 
             // Create autoscrollCursorManager
             const div = document.createElement('div');
@@ -14,8 +16,8 @@ document.body.addEventListener('click', (e) => {
             div.classList.add('autoscrollCursorManager')
 
             // Set x and y
-            x = e.clientX - 15
-            y = e.clientY - 15
+            x = e.clientX - d
+            y = e.clientY - d
 
             // move it to the x and y
             div.style.left = `${x}px`
@@ -26,8 +28,8 @@ document.body.addEventListener('click', (e) => {
             
             myInterval = setInterval(() => {
                 this.scrollBy({
-                    top: y - e.clientY + 15,
-                    left: x - e.clientX + 15,
+                    top: y - e.clientY + d,
+                    left: x - e.clientX + d,
                     behavior: "smooth",
                 })
             }, 10)
@@ -47,6 +49,6 @@ document.body.addEventListener('click', (e) => {
 })
 
 document.addEventListener('mousemove', (e) => {
-    x = e.clientX - 15
-    y = e.clientY - 15
+    x = e.clientX - d
+    y = e.clientY - d
 })
