@@ -3,7 +3,7 @@ let d=3;
 
 document.body.addEventListener("mousedown", (e) => {
   if (!document.querySelector(".autoscrollCursorManager")) {
-    if ((e.ctrlKey && e.button === 0) || e.button === 1) {
+    if ((e.altKey && e.button === 0) || e.button === 1) {
       browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 10 }) => {
         d = acceleration;
         const div = document.createElement("div");
