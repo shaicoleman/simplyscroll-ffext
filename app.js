@@ -1,54 +1,33 @@
-const d = 3;
+let x, y, myInterval;
 
-let x = undefined
-let y = undefined
+document.body.addEventListener("mousedown", (e) => {
+  if (!document.querySelector(".autoscrollCursorManager")) {
+    if ((e.ctrlKey && e.button === 0) || e.button === 1) {
+      chrome.storage.sync.get(["acceleration", "interval"], ({ acceleration = 15, interval = 10 }) => {
+        const div = document.createElement("div");
+        div.classList.add("autoscrollCursorManager");
 
-let myInterval = undefined
+        x = e.clientX - acceleration;
+        y = e.clientY - acceleration;
 
-document.body.addEventListener('mousedown', (e) => {
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        document.body.appendChild(div);
 
-    if (!document.querySelector('.autoscrollCursorManager')) {
-        if ((e.ctrlKey && e.button === 0) || (e.button === 1)) {
-
-            // Create autoscrollCursorManager
-            const div = document.createElement('div');
-            
-            div.classList.add('autoscrollCursorManager')
-
-            // Set x and y
-            x = e.clientX - d
-            y = e.clientY - d
-
-            // move it to the x and y
-            div.style.left = `${x}px`
-            div.style.top = `${y}px`
-
-            // Add cursor to the div
-            document.body.appendChild(div)
-            
-            myInterval = setInterval(() => {
-                this.scrollBy({
-                    top: y - e.clientY + d,
-                    left: x - e.clientX + d,
-                    behavior: "smooth",
-                })
-            }, 10)
-
-            document.body.style.cursor = "all-scroll"
-        }
-
-    } else {
-        e.preventDefault()
-        document.querySelector('.autoscrollCursorManager').remove()
-        x = undefined
-        y = undefined
-
-        clearInterval(myInterval)
-        document.body.style.cursor = "default"
+        myInterval = setInterval(() => {
+          window.scrollBy({
+            top: y - e.clientY + acceleration,
+            left: x - e.clientX + acceleration,
+            behavior: "smooth",
+          });
+        }, interval);
+      });
     }
-})
+  }
+});
 
-document.addEventListener('mousemove', (e) => {
-    x = e.clientX - d
-    y = e.clientY - d
-})
+document.body.addEventListener("mouseup", () => {
+  const manager = document.querySelector(".autoscrollCursorManager");
+  if (manager) manager.remove();
+  if (myInterval) clearInterval(myInterval);
+});
