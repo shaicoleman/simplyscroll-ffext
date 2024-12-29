@@ -1,33 +1,45 @@
 let x, y, myInterval;
+let d=3;
 
 document.body.addEventListener("mousedown", (e) => {
   if (!document.querySelector(".autoscrollCursorManager")) {
     if ((e.ctrlKey && e.button === 0) || e.button === 1) {
-      chrome.storage.sync.get(["acceleration", "interval"], ({ acceleration = 15, interval = 10 }) => {
+      browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 10 }) => {
+        d = acceleration;
         const div = document.createElement("div");
         div.classList.add("autoscrollCursorManager");
 
-        x = e.clientX - acceleration;
-        y = e.clientY - acceleration;
+        // Set initial position
+        x = e.clientX - d;
+        y = e.clientY - d;
 
         div.style.left = `${x}px`;
         div.style.top = `${y}px`;
         document.body.appendChild(div);
 
+        // Start scrolling
         myInterval = setInterval(() => {
           window.scrollBy({
-            top: y - e.clientY + acceleration,
-            left: x - e.clientX + acceleration,
+            top: (y - e.clientY + d),
+            left: (x - e.clientX + d),
             behavior: "smooth",
           });
         }, interval);
       });
     }
-  }
+  }  else {
+        e.preventDefault()
+        document.querySelector('.autoscrollCursorManager').remove()
+        x = undefined
+        y = undefined
+        d = undefined
+
+        clearInterval(myInterval)
+        document.body.style.cursor = "default"
+    }
 });
 
-document.body.addEventListener("mouseup", () => {
-  const manager = document.querySelector(".autoscrollCursorManager");
-  if (manager) manager.remove();
-  if (myInterval) clearInterval(myInterval);
+document.addEventListener("mousemove", (e) => {
+  x = e.clientX - d
+  y = e.clientY - d
 });

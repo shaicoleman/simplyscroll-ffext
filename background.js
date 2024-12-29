@@ -1,3 +1,3 @@
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ acceleration: 15, interval: 10 });
+browser.runtime.onInstalled.addListener(() => {
+  browser.storage.sync.set({ acceleration: 3, interval: 10 });
 });
