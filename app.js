@@ -6,7 +6,7 @@ let myInterval = undefined
 document.body.addEventListener('click', (e) => {
 
     if (!document.querySelector('.autoscrollCursorManager')) {
-        if (e.ctrlKey && e.button === 0) {
+        if ((e.ctrlKey && e.button === 0) || (e.button === 2)) {
 
             // Create autoscrollCursorManager
             const div = document.createElement('div');
