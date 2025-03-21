@@ -7,8 +7,8 @@ document.addEventListener('contextmenu', (event) => {
 
 document.body.addEventListener("mousedown", (e) => {
   if (!document.querySelector(".autoscrollCursorManager")) {
-    if (!e.ctrlKey && ((e.altKey && e.button === 0) || e.button === 2)) {
-      e.preventDefault();
+    if (e.button === 1 && !e.ctrlKey && !e.altKey && !isLinkOrChildOfLink(e.target)) {
+      e.preventDefault(); // Prevent default middle-click behavior for non-links
       browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 10 }) => {
         d = acceleration;
         const div = document.createElement("div");
@@ -48,3 +48,19 @@ document.addEventListener("mousemove", (e) => {
   x = e.clientX - d
   y = e.clientY - d
 });
+
+// Helper function to determine if an element is a link or child of a link
+function isLinkOrChildOfLink(element) {
+    // Check if the element itself is a link
+    if (element.tagName === 'A' || element.closest('a')) {
+        return true;
+    }
+    
+    // Check if the element has an onclick handler or other interactive behaviors
+    if (element.hasAttribute('onclick') || 
+        element.hasAttribute('role') && ['button', 'link'].includes(element.getAttribute('role'))) {
+        return true;
+    }
+    
+    return false;
+}
