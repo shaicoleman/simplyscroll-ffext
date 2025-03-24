@@ -27,9 +27,10 @@ function stopAutoscroll() {
 document.body.addEventListener("mousedown", (e) => {
   // Only process middle-click (e.button === 1)
   if (e.button === 1) {
-    // If already autoscrolling, stop it and return early
+    // If autoscrolling is active, stop it and prevent further handling
     if (isAutoscrolling) {
       e.preventDefault();
+      e.stopPropagation();
       stopAutoscroll();
       return;
     }
@@ -39,7 +40,7 @@ document.body.addEventListener("mousedown", (e) => {
       e.preventDefault(); // Prevent default middle-click behavior for non-links
       isAutoscrolling = true;
       
-      // Retrieve settings from storage
+      // Retrieve settings from storage (with defaults)
       browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 16 }) => {
         d = acceleration;
         
@@ -61,7 +62,7 @@ document.body.addEventListener("mousedown", (e) => {
         overlay.classList.add("autoscrollOverlay");
         document.body.appendChild(overlay);
         
-        // Forward mousemove events from the overlay to update scrolling
+        // Forward mousemove events from the overlay to update scrolling variables
         overlay.addEventListener("mousemove", (e) => {
           if (isAutoscrolling) {
             x = e.clientX;
@@ -71,25 +72,12 @@ document.body.addEventListener("mousedown", (e) => {
         
         // Use the overlay's mousedown to stop autoscrolling on any mouse click
         overlay.addEventListener("mousedown", (e) => {
-          if (e.button === 1 && isAutoscrolling) {
-            // Middle-click
-            e.preventDefault();
-            stopAutoscroll();
-            e.stopPropagation();
-          }
-          // Stop autoscrolling on left-click (button clicks)
-          else if (e.button === 0 && isAutoscrolling) {
-            stopAutoscroll();
-            // Don't prevent default or stop propagation to allow the click to reach the button
-          }
-          // NEW: Stop autoscrolling on right-click
-          else if (e.button === 2 && isAutoscrolling) {
-            e.preventDefault(); // Prevent default right-click behavior
-            stopAutoscroll();
-          }
+          e.preventDefault();
+          e.stopPropagation();
+          stopAutoscroll();
         });
         
-        // Prevent context menu on the overlay during autoscroll
+        // Prevent the context menu on the overlay during autoscroll
         overlay.addEventListener("contextmenu", (e) => {
           if (isAutoscrolling) {
             e.preventDefault();
@@ -101,10 +89,10 @@ document.body.addEventListener("mousedown", (e) => {
           const deltaY = y - initialY;
           const deltaX = x - initialX;
           
-          // Smoother acceleration using an exponential function
+          // Calculate speeds using a scaling factor for smooth scrolling
           const speedFactor = d / 4;
-          const verticalSpeed = Math.sign(deltaY) * Math.abs(deltaY * speedFactor) / 10;
-          const horizontalSpeed = Math.sign(deltaX) * Math.abs(deltaX * speedFactor) / 10;
+          const verticalSpeed = Math.sign(deltaY) * (Math.abs(deltaY * speedFactor) / 10);
+          const horizontalSpeed = Math.sign(deltaX) * (Math.abs(deltaX * speedFactor) / 10);
           
           window.scrollBy({
             top: verticalSpeed,
@@ -117,26 +105,21 @@ document.body.addEventListener("mousedown", (e) => {
   }
 });
 
-// NEW: Add a document-wide click handler to disable autoscrolling when buttons are clicked
-document.addEventListener('click', (event) => {
+// Prevent context menu on the whole document during autoscroll
+document.addEventListener('contextmenu', (event) => {
   if (isAutoscrolling) {
-    const target = event.target;
-    // Check if the clicked element is a button or has button-like behavior
-    if (
-      target.tagName === 'BUTTON' ||
-      (target.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(target.type)) ||
-      target.closest('button') ||
-      (target.hasAttribute('role') && target.getAttribute('role') === 'button') ||
-      target.classList.contains('button') ||
-      target.classList.contains('btn')
-    ) {
-      stopAutoscroll();
-      // Allow the click to proceed normally
-    }
+    event.preventDefault();
   }
 });
 
-// Helper function to determine if an element is a link or a child of a link
+// Stop autoscroll when the Escape key is pressed
+document.addEventListener('keydown', (event) => {
+  if (isAutoscrolling && event.key === 'Escape') {
+    stopAutoscroll();
+  }
+});
+
+// Helper function to determine if an element is a link or child of a link
 function isLinkOrChildOfLink(element) {
   if (element.tagName === 'A' || element.closest('a')) {
     return true;
@@ -147,18 +130,3 @@ function isLinkOrChildOfLink(element) {
   }
   return false;
 }
-
-// Prevent context menu during autoscroll on the whole document
-document.addEventListener('contextmenu', (event) => {
-  if (isAutoscrolling) {
-    event.preventDefault();
-    // Don't stop autoscrolling here, let the mousedown handler do it
-  }
-});
-
-// NEW: Add keyboard event listener to stop autoscrolling when Escape key is pressed
-document.addEventListener('keydown', (event) => {
-  if (isAutoscrolling && event.key === 'Escape') {
-    stopAutoscroll();
-  }
-});
