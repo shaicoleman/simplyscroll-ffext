@@ -84,8 +84,8 @@ document.body.addEventListener("mousedown", (e) => {
           }
           // NEW: Stop autoscrolling on right-click
           else if (e.button === 2 && isAutoscrolling) {
+            e.preventDefault(); // Prevent default right-click behavior
             stopAutoscroll();
-            // Don't prevent default here as the contextmenu handler will handle it
           }
         });
         
@@ -152,7 +152,7 @@ function isLinkOrChildOfLink(element) {
 document.addEventListener('contextmenu', (event) => {
   if (isAutoscrolling) {
     event.preventDefault();
-    stopAutoscroll(); // NEW: Stop autoscrolling on context menu (right-click)
+    // Don't stop autoscrolling here, let the mousedown handler do it
   }
 });
 
