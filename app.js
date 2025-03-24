@@ -1,27 +1,22 @@
 let x, y, myInterval;
-let d=3;
-
-document.addEventListener('contextmenu', (event) => {
-    if (!event.ctrlKey) event.preventDefault();
-});
+let d = 3;
+let isAutoscrolling = false;
 
 document.body.addEventListener("mousedown", (e) => {
   if (!document.querySelector(".autoscrollCursorManager")) {
     if (e.button === 1 && !e.ctrlKey && !e.altKey && !isLinkOrChildOfLink(e.target)) {
       e.preventDefault(); // Prevent default middle-click behavior for non-links
+      isAutoscrolling = true;
       browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 10 }) => {
         d = acceleration;
         const div = document.createElement("div");
         div.classList.add("autoscrollCursorManager");
-
         // Set initial position
         x = e.clientX - d;
         y = e.clientY - d;
-
         div.style.left = `${x}px`;
         div.style.top = `${y}px`;
         document.body.appendChild(div);
-
         // Start scrolling
         myInterval = setInterval(() => {
           window.scrollBy({
@@ -32,21 +27,23 @@ document.body.addEventListener("mousedown", (e) => {
         }, interval);
       });
     }
-  }  else {
-        e.preventDefault()
-        document.querySelector('.autoscrollCursorManager').remove()
-        x = undefined
-        y = undefined
-        d = undefined
-
-        clearInterval(myInterval)
-        document.body.style.cursor = "default"
-    }
+  } else if (isAutoscrolling) {
+    e.preventDefault();
+    document.querySelector('.autoscrollCursorManager').remove();
+    x = undefined;
+    y = undefined;
+    d = undefined;
+    clearInterval(myInterval);
+    document.body.style.cursor = "default";
+    isAutoscrolling = false;
+  }
 });
 
 document.addEventListener("mousemove", (e) => {
-  x = e.clientX - d
-  y = e.clientY - d
+  if (isAutoscrolling) {
+    x = e.clientX - d;
+    y = e.clientY - d;
+  }
 });
 
 // Helper function to determine if an element is a link or child of a link
