@@ -103,8 +103,8 @@ document.body.addEventListener("mousedown", (e) => {
           
           // Smoother acceleration using an exponential function
           const speedFactor = d / 4;
-          const verticalSpeed = Math.sign(deltaY) * Math.min(Math.abs(deltaY * speedFactor) / 10, 30);
-          const horizontalSpeed = Math.sign(deltaX) * Math.min(Math.abs(deltaX * speedFactor) / 10, 30);
+          const verticalSpeed = Math.sign(deltaY) * Math.abs(deltaY * speedFactor) / 10;
+          const horizontalSpeed = Math.sign(deltaX) * Math.abs(deltaX * speedFactor) / 10;
           
           window.scrollBy({
             top: verticalSpeed,
