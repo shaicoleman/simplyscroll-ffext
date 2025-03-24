@@ -155,3 +155,10 @@ document.addEventListener('contextmenu', (event) => {
     stopAutoscroll(); // NEW: Stop autoscrolling on context menu (right-click)
   }
 });
+
+// NEW: Add keyboard event listener to stop autoscrolling when Escape key is pressed
+document.addEventListener('keydown', (event) => {
+  if (isAutoscrolling && event.key === 'Escape') {
+    stopAutoscroll();
+  }
+});
