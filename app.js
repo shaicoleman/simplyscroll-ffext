@@ -1,5 +1,5 @@
 let x, y, myInterval;
-let d = 3;
+let d = 30 / 2;
 let isAutoscrolling = false;
 let initialX, initialY; // Store the initial click position
 let overlay = null;    // Overlay element to block hover events
@@ -41,9 +41,7 @@ document.body.addEventListener("mousedown", (e) => {
       isAutoscrolling = true;
       
       // Retrieve settings from storage (with defaults)
-      browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 16 }) => {
-        d = acceleration;
-        
+      browser.storage.sync.get(["acceleration", "interval"]).then(({ acceleration = 3, interval = 10 }) => {      
         // Create the autoscroll cursor indicator
         const div = document.createElement("div");
         div.classList.add("autoscrollCursorManager");
@@ -90,9 +88,10 @@ document.body.addEventListener("mousedown", (e) => {
           const deltaX = x - initialX;
           
           // Calculate speeds using a scaling factor for smooth scrolling
-          const speedFactor = d / 4;
-          const verticalSpeed = Math.sign(deltaY) * (Math.abs(deltaY * speedFactor) / 10);
-          const horizontalSpeed = Math.sign(deltaX) * (Math.abs(deltaX * speedFactor) / 10);
+          acceleration = 50;
+          speed = 50;
+          const verticalSpeed = Math.trunc(Math.sign(deltaY) * Math.abs(deltaY) ** (1 + acceleration / 300) / 1000 * speed);
+          const horizontalSpeed = Math.trunc(Math.sign(deltaX) * Math.abs(deltaX) ** (1 + acceleration / 300) / 1000 * speed);
           
           window.scrollBy({
             top: verticalSpeed,
