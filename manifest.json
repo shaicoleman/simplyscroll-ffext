@@ -1,10 +1,10 @@
 {
   "manifest_version": 2,
-  "name": "SimplyScroll",
+  "name": "AutoScroll",
   "version": "0.1",
   "applications": {
     "gecko": {
-      "id": "simplyscroll@ryse.top"
+      "id": "mozilla@shaicoleman.com"
     }
   },
   "permissions": ["activeTab", "storage"],
