@@ -2,34 +2,47 @@
   "manifest_version": 2,
   "name": "AutoScroll",
   "version": "0.1",
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
-      "id": "mozilla@shaicoleman.com"
+      "id": "autoscroll2@shaicoleman.com",
+      "strict_min_version": "92.0"
     }
   },
-  "permissions": ["activeTab", "storage"],
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js"
+    ]
   },
   "browser_action": {
     "default_title": "Setup",
     "default_popup": "popup.html"
   },
   "content_scripts": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "app.js"
-            ],
-            "css": [
-                "app.css"
-            ]
-        }
-    ],
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "app.js"
+      ],
+      "css": [
+        "app.css"
+      ]
+    }
+  ],
   "icons": {
-        "32": "auto-scroll.svg"
-    },
-  "web_accessible_resources": ["auto-scroll.svg"]
+    "16": "autoscroll.svg",
+    "32": "autoscroll.svg",
+    "48": "autoscroll.svg",
+    "64": "autoscroll.svg",
+    "96": "autoscroll.svg",
+    "128": "autoscroll.svg"
+  },
+  "web_accessible_resources": [
+    "autoscroll.svg"
+  ]
 }

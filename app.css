@@ -4,7 +4,7 @@
     height: 30px;
     cursor: pointer;
     z-index: 1000;
-    background: url(./auto-scroll.svg) center / contain no-repeat;
+    background: url(./autoscroll.svg) center / contain no-repeat;
 }
 
 .autoscrollOverlay {
